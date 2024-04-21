@@ -17,7 +17,7 @@ export default function SignUpScreen() {
       try {
         await createUserWithEmailAndPassword(auth, email, password)
       } catch (err) {
-        console.log("got error", err.message)
+        console.log("got error :", err.message)
       }
     }
   }
