@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, Image, TextInput} from 'react-native';
 import {AppColors} from '../theme/appColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import {useNavigation} from '@react-navigation/native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 export default function LoginScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async () => {
+    if (email && password){
+      try {
+        await signInWithEmailAndPassword(auth, email, password)
+      } catch (err) {
+        console.log("error", err.message)
+      }
+    }
+  }
   return (
     <View style={{flex: 1, backgroundColor: AppColors.primary}}>
       <SafeAreaView style={{flex: 1}}>
@@ -43,20 +57,24 @@ export default function LoginScreen() {
           </Text>
           <TextInput
             placeholder="Enter Email"
-            value="john@gmail.com"
+            value={email}
+            onChangeText={value => setEmail(value)}
             style={{backgroundColor: AppColors.input, padding : 15, borderRadius : 50, margin: 5}}
           />
           <Text style={{color: AppColors.text, fontWeight: 'bold'}}>Password</Text>
           <TextInput
             placeholder="Enter Email"
-            value="john1234"
+            value={password}
+            onChangeText={value => setPassword(value)}
             secureTextEntry
             style={{backgroundColor: AppColors.input, padding : 15, borderRadius : 50,margin: 5}}
           />
           <TouchableOpacity>
             <Text style={{color : AppColors.text, alignSelf : "flex-end"}}>Forgot Password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{backgroundColor: AppColors.third, marginLeft: 4, borderRadius : 50, margin : 20}}>
+          <TouchableOpacity 
+          onPress={handleSubmit}
+          style={{backgroundColor: AppColors.third, marginLeft: 4, borderRadius : 50, margin : 20}}>
             <Text style={{textAlign : "center", margin : 10, fontWeight : "bold", fontSize : 20}}>Login</Text>
           </TouchableOpacity>
         </View>

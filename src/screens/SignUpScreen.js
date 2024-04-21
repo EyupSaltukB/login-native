@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, Image, TextInput} from 'react-native';
 import {AppColors} from '../theme/appColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import {useNavigation} from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 export default function SignUpScreen() {
   const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async () => {
+    if (email && password){
+      try {
+        await createUserWithEmailAndPassword(auth, email, password)
+      } catch (err) {
+        console.log("got error", err.message)
+      }
+    }
+  }
+
   return (
     <View style={{flex: 1, backgroundColor: AppColors.primary}}>
       <SafeAreaView style={{flex: 1}}>
@@ -43,7 +58,6 @@ export default function SignUpScreen() {
           </Text>
           <TextInput
             placeholder="Enter Name"
-            value="john@gmail.com"
             style={{backgroundColor: AppColors.input, padding : 15, borderRadius : 50, margin: 5}}
           />
           <Text style={{color: AppColors.text, fontWeight: 'bold'}}>
@@ -51,17 +65,21 @@ export default function SignUpScreen() {
           </Text>
           <TextInput
             placeholder="Enter Email"
-            value="john@gmail.com"
+            value={email}
             style={{backgroundColor: AppColors.input, padding : 15, borderRadius : 50, margin: 5}}
+            onChangeText={value => setEmail(value)}
           />
           <Text style={{color: AppColors.text, fontWeight: 'bold'}}>Password</Text>
           <TextInput
             placeholder="Enter Email"
-            value="john1234"
+            value={password}
+            onChangeText={value => setPassword(value)}
             secureTextEntry
             style={{backgroundColor: AppColors.input, padding : 15, borderRadius : 50,margin: 5}}
           />
-          <TouchableOpacity style={{backgroundColor: AppColors.signupButton, marginLeft: 4, borderRadius : 50, margin : 20}}>
+          <TouchableOpacity 
+          onPress={handleSubmit}
+          style={{backgroundColor: AppColors.signupButton, marginLeft: 4, borderRadius : 50, margin : 20}}>
             <Text style={{color : AppColors.secondary, textAlign : "center", margin : 10, fontWeight : "bold", fontSize : 20}}>Sign Up</Text>
           </TouchableOpacity>
         </View>
